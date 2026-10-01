@@ -53,7 +53,7 @@ const structuredData = events.map(({ data }) => ({
     ) : (
       <ul class="mt-4 space-y-4">
         {events.map(({ data, Content }) => (
-          <li class="rounded-lg border-2 border-ink bg-card p-5">
+          <li class="rounded-lg bg-surface p-6 shadow-lg">
             <h3 class="font-bold">{data.title}</h3>
             <p class="first-letter:uppercase">
               <time datetime={data.date}>{formatDate(data.date)}</time>
@@ -70,7 +70,7 @@ const structuredData = events.map(({ data }) => ({
             </div>
             {data.ticketUrl && (
               <p class="mt-2">
-                <a href={data.ticketUrl} rel="noopener" class="font-bold underline">
+                <a href={data.ticketUrl} target="_blank" rel="noopener" class="font-bold underline">
                   Kaartjes en meer info
                 </a>
               </p>

@@ -26,5 +26,4 @@ Consult these guides before working on related tasks:
 - Content is edited by non-developers via Pages CMS (`.pages.yml`). When changing a content schema in `src/content.config.ts`, update the matching fields in `.pages.yml` too.
 - Optional fields may arrive as `""` or `null` from the CMS; wrap them with the `optional()` helper in `src/content.config.ts`.
 - Event dates are plain `YYYY-MM-DD` strings (all shows are in the Netherlands) and are displayed as entered; see `src/lib/dates.ts`.
-- Site text is Dutch; keep `trailingSlash: 'always'` and link with trailing slashes (`/agenda/`).
-- Colors come from the tokens in `src/styles/global.css` (`page`, `card`, `ink`, `link`); `page` and `card` follow the randomly picked brand color. Use those (e.g. `bg-card`, `border-ink`) rather than fixed colors. There is no dark mode.
+- Site text is Dutch; keep `trailingSlash: 'always'` and link with trailing slashes. Build internal links with `url()` from `src/lib/url.ts` (`url('/agenda/')`), so they work under the `base` path of the test address.

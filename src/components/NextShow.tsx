@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { url } from '../lib/url';
 
 export interface Show {
   title: string;
@@ -35,7 +36,7 @@ export default function NextShow({ shows }: Props) {
   if (!next) {
     return (
       <p className="font-bold">
-        Check onze <a href="/agenda/">agenda</a> voor alle volgende shows!
+        Check onze <a href={url('/agenda/')}>agenda</a> voor alle volgende shows!
       </p>
     );
   }
@@ -43,13 +44,15 @@ export default function NextShow({ shows }: Props) {
   const daysLeft = today ? daysBetween(today, next.date) : null;
 
   return (
-    <section aria-labelledby="next-show" className="rounded-lg border-2 border-ink bg-card p-5">
-      {daysLeft !== null && (
-        <p className="mb-3 font-bold">
+    <section aria-labelledby="next-show" className="rounded-lg bg-surface p-6 shadow-lg">
+      {daysLeft !== null ? (
+        <p className="mb-3 font-bold duration-100 motion-safe:animate-in motion-safe:fade-in">
           {daysLeft === 0
             ? '🎭 DOGMA speelt vandaag! 🎭'
             : `Over ${daysLeft} ${daysLeft === 1 ? 'dag' : 'dagen'} is onze volgende voorstelling! 🎭`}
         </p>
+      ) : (
+        <p className="mb-3 font-bold">&nbsp;</p>
       )}
       <h2 id="next-show" className="text-lg font-bold">
         {next.title}

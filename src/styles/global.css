@@ -1,45 +1,13 @@
 @import "tailwindcss";
+@import "tw-animate-css";
 @plugin "@tailwindcss/typography";
 
 @theme {
-  --color-page: var(--brand-page);
-  --color-card: var(--brand-card);
-  --color-ink: #111111;
-  --color-link: #095f7b;
+  --color-background: #c8ffdb;
+  --color-surface: #e2ffee;
+  --color-foreground: #111111;
+  --color-primary: #095f7b;
   --font-sans: Tahoma, Verdana, "Segoe UI", system-ui, sans-serif;
-}
-
-/* Background colors, one set per brand color. BaseLayout picks a random brand
-   once per visit by setting <html data-brand="…">; green is the fallback.
-   All of them share the same OKLCH lightness per role, so every brand color looks
-   equally light and text contrast stays the same. Chroma is capped
-   where a hue can't get more saturated at that lightness on regular screens.
-   Keep the brand names in sync with the list in BaseLayout.astro. */
-:root,
-:root[data-brand="green"] {
-  /* #7BD893 */
-  --brand-page: oklch(0.92 0.07 151);
-  --brand-card: oklch(0.97 0.03 151);
-}
-:root[data-brand="blue"] {
-  /* #60A9E3 */
-  --brand-page: oklch(0.92 0.041 244);
-  --brand-card: oklch(0.97 0.015 244);
-}
-:root[data-brand="pink"] {
-  /* #FF95C6 */
-  --brand-page: oklch(0.92 0.047 352);
-  --brand-card: oklch(0.97 0.016 352);
-}
-:root[data-brand="yellow"] {
-  /* #FFC610 */
-  --brand-page: oklch(0.92 0.07 87);
-  --brand-card: oklch(0.97 0.03 87);
-}
-:root[data-brand="orange"] {
-  /* #FF5F14 */
-  --brand-page: oklch(0.92 0.042 40);
-  --brand-card: oklch(0.97 0.015 40);
 }
 
 /* The site is always light, also when the system is in dark mode. */
@@ -49,21 +17,21 @@
 
 /* Point the typography plugin (Markdown content) at the same colors. */
 .prose {
-  --tw-prose-body: var(--color-ink);
-  --tw-prose-headings: var(--color-ink);
-  --tw-prose-bold: var(--color-ink);
-  --tw-prose-links: var(--color-link);
-  --tw-prose-bullets: var(--color-ink);
-  --tw-prose-counters: var(--color-ink);
-  --tw-prose-quotes: var(--color-ink);
-  --tw-prose-hr: var(--color-ink);
+  --tw-prose-body: var(--color-foreground);
+  --tw-prose-headings: var(--color-foreground);
+  --tw-prose-bold: var(--color-foreground);
+  --tw-prose-links: var(--color-primary);
+  --tw-prose-bullets: var(--color-foreground);
+  --tw-prose-counters: var(--color-foreground);
+  --tw-prose-quotes: var(--color-foreground);
+  --tw-prose-hr: var(--color-foreground);
 }
 
 @layer base {
   body {
-    @apply bg-page text-ink font-sans antialiased;
+    @apply bg-background text-foreground font-sans antialiased;
   }
   a {
-    @apply text-link;
+    @apply text-primary;
   }
 }

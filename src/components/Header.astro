@@ -1,12 +1,13 @@
 ---
 import site from '../data/site.json';
 import Logo from '../assets/images/dogma-logo.svg';
+import { url } from '../lib/url';
 
 const links = [
-  { href: '/', label: 'home' },
-  { href: '/agenda/', label: 'agenda' },
-  { href: '/spelers/', label: 'spelers' },
-  { href: '/contact/', label: 'contact' },
+  { href: url('/'), label: 'home' },
+  { href: url('/agenda/'), label: 'agenda' },
+  { href: url('/spelers/'), label: 'spelers' },
+  { href: url('/contact/'), label: 'contact' },
 ];
 
 const current = Astro.url.pathname;
@@ -21,8 +22,8 @@ const current = Astro.url.pathname;
             <a
               href={href}
               class:list={[
-                'text-ink no-underline hover:underline',
-                current === href && 'underline decoration-2 underline-offset-4',
+                'text-ink no-underline decoration-2 underline-offset-4 hover:underline',
+                current === href && 'underline',
               ]}
               aria-current={current === href ? 'page' : undefined}
             >
@@ -34,7 +35,7 @@ const current = Astro.url.pathname;
     </ul>
   </nav>
 
-  <a href="/" class="mt-6 block">
+  <a href={url('/')} class="mt-12 block">
     <Logo role="img" aria-label={site.name} class="block h-auto w-full" />
   </a>
 </header>

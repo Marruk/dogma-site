@@ -1,14 +1,15 @@
 ---
 import site from '../data/site.json';
+import { url } from '../lib/url';
 
 const socials = [
-  { href: site.facebook, label: 'Facebook', icon: '/icons/facebook.png' },
-  { href: site.instagram, label: 'Instagram', icon: '/icons/instagram.png' },
-  { href: site.whatsapp, label: 'WhatsApp-kanaal', icon: '/icons/whatsapp.png' },
+  { href: site.facebook, label: 'Facebook', icon: url('/icons/facebook.png') },
+  { href: site.instagram, label: 'Instagram', icon: url('/icons/instagram.png') },
+  { href: site.whatsapp, label: 'WhatsApp-kanaal', icon: url('/icons/whatsapp.png') },
 ].filter((social) => social.href);
 ---
 
-<footer class="mt-16 flex flex-col items-center gap-4 text-sm">
+<footer class="mt-16 flex flex-col items-center gap-4">
   <ul class="flex items-center gap-4">
     {
       socials.map(({ href, label, icon }) => (
@@ -20,5 +21,4 @@ const socials = [
       ))
     }
   </ul>
-  <a href={`mailto:${site.email}`}>{site.email}</a>
 </footer>

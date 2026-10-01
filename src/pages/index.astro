@@ -7,6 +7,7 @@ import NextShow, { type Show } from '../components/NextShow';
 import site from '../data/site.json';
 import { getUpcomingEvents } from '../lib/events';
 import { formatDate } from '../lib/dates';
+import { url } from '../lib/url';
 
 const page = (await getEntry('pages', 'home'))!;
 const shows: Show[] = (await getUpcomingEvents()).map(({ data }) => ({
@@ -32,7 +33,7 @@ const shows: Show[] = (await getUpcomingEvents()).map(({ data }) => ({
 
   <p class="mt-6">
     Zet 'm in je agenda en maak kennis met onze uitgelaten spelers! Wil je meer van onze activiteiten
-    zien? Check onze <a href="/agenda/">agenda</a> en volg ons op <a
+    zien? Check onze <a href={url('/agenda/')}>agenda</a> en volg ons op <a
       href={site.instagram}
       rel="noopener">Instagram</a
     >.

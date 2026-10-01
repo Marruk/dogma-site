@@ -41,6 +41,8 @@ Each save is a commit to `main`, which triggers a deploy. Changes are live after
 
 Every push to `main` builds and deploys the site. The workflow also runs every night, so past shows drop off the agenda even when nobody edits anything.
 
+Until the domain is switched over, the site runs at the test address <https://marruk.github.io/dogma-site/> (`site` and `base` in `astro.config.mjs`), which search engines are told not to index. To go live on dogma-utrecht.nl, set `site: 'https://dogma-utrecht.nl'`, remove `base`, and do the setup below.
+
 One-time setup:
 
 1. **Settings → Pages → Build and deployment → Source: GitHub Actions**.
