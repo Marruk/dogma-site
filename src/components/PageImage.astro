@@ -1,0 +1,22 @@
+---
+import { Image } from 'astro:assets';
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  page: CollectionEntry<'pages'>;
+}
+
+const { image, imageAlt, title } = Astro.props.page.data;
+---
+
+{
+  image && (
+    <Image
+      src={image}
+      alt={imageAlt ?? title}
+      widths={[400, 800, 1200]}
+      sizes="(min-width: 768px) 736px, 100vw"
+      class="mt-10 h-auto w-full rounded-lg"
+    />
+  )
+}

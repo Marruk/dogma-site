@@ -1,0 +1,44 @@
+---
+import { getCollection, getEntry, render } from 'astro:content';
+import { Image } from 'astro:assets';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageIntro from '../components/PageIntro.astro';
+
+const page = (await getEntry('pages', 'spelers'))!;
+const players = await Promise.all(
+  (await getCollection('players'))
+    .sort((a, b) => a.data.name.localeCompare(b.data.name, 'nl'))
+    .map(async (player) => ({ ...player, ...(await render(player)) })),
+);
+---
+
+<BaseLayout
+  title={page.data.seoTitle ?? page.data.title}
+  description={page.data.description}
+  image={page.data.image ?? players[0]?.data.photo}
+>
+  <PageIntro page={page} />
+
+  <ul class="mt-8 space-y-12">
+    {
+      players.map(({ data, Content }, index) => (
+        <li class:list={['flex flex-col gap-5 sm:items-start', index % 2 ? 'sm:flex-row-reverse' : 'sm:flex-row']}>
+          <Image
+            src={data.photo}
+            alt={data.name}
+            width={240}
+            height={240}
+            densities={[1, 2]}
+            class="aspect-square w-48 shrink-0 self-center rounded-lg object-cover sm:w-56 sm:self-start"
+          />
+          <div>
+            <h2 class="text-lg font-bold">{data.name}</h2>
+            <div class="prose mt-1 max-w-none text-justify">
+              <Content />
+            </div>
+          </div>
+        </li>
+      ))
+    }
+  </ul>
+</BaseLayout>

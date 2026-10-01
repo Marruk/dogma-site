@@ -1,0 +1,87 @@
+---
+import { getEntry, render } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageIntro from '../components/PageIntro.astro';
+import PageImage from '../components/PageImage.astro';
+import site from '../data/site.json';
+import { getUpcomingEvents } from '../lib/events';
+import { dutchOffset, formatDate } from '../lib/dates';
+
+const page = (await getEntry('pages', 'agenda'))!;
+const events = await Promise.all(
+  (await getUpcomingEvents()).map(async (event) => ({ ...event, ...(await render(event)) })),
+);
+
+// Structured data so search engines can show the shows as events.
+const structuredData = events.map(({ data }) => ({
+  '@context': 'https://schema.org',
+  '@type': 'TheaterEvent',
+  name: data.title,
+  startDate: data.time ? `${data.date}T${data.time}${dutchOffset(data.date)}` : data.date,
+  eventStatus: 'https://schema.org/EventScheduled',
+  eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
+  location: {
+    '@type': 'Place',
+    name: data.venue,
+    address: data.address ?? 'Utrecht',
+  },
+  performer: { '@type': 'PerformingGroup', name: site.name },
+  ...(data.ticketUrl && { offers: { '@type': 'Offer', url: data.ticketUrl } }),
+}));
+---
+
+<BaseLayout
+  title={page.data.seoTitle ?? page.data.title}
+  description={page.data.description}
+  image={page.data.image}
+>
+  {
+    structuredData.length > 0 && (
+      <script is:inline slot="head" type="application/ld+json" set:html={JSON.stringify(structuredData)} />
+    )
+  }
+
+  <PageIntro page={page} />
+
+  <h2 class="mt-8 text-xl font-bold">We spelen de volgende wedstrijden</h2>
+  {
+    events.length === 0 ? (
+      <p class="mt-4">
+        Er staan op dit moment geen voorstellingen gepland. Volg ons op{' '}
+        <a href={site.instagram}>Instagram</a> voor het laatste nieuws!
+      </p>
+    ) : (
+      <ul class="mt-4 space-y-4">
+        {events.map(({ data, Content }) => (
+          <li class="rounded-lg border-2 border-ink bg-card p-5">
+            <h3 class="font-bold">{data.title}</h3>
+            <p class="first-letter:uppercase">
+              <time datetime={data.date}>{formatDate(data.date)}</time>
+              {data.time && `, ${data.time}`} · {data.venue}
+              {data.address && (
+                <>
+                  {' '}
+                  ({data.mapUrl ? <a href={data.mapUrl}>{data.address}</a> : data.address})
+                </>
+              )}
+            </p>
+            <div class="prose mt-2 max-w-none">
+              <Content />
+            </div>
+            {data.ticketUrl && (
+              <p class="mt-2">
+                <a href={data.ticketUrl} rel="noopener" class="font-bold underline">
+                  Kaartjes en meer info
+                </a>
+              </p>
+            )}
+          </li>
+        ))}
+      </ul>
+    )
+  }
+
+  <p class="mt-6">Zet de data in je agenda en kom kijken!</p>
+
+  <PageImage page={page} />
+</BaseLayout>

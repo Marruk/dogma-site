@@ -1,0 +1,17 @@
+---
+import { getEntry } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageIntro from '../components/PageIntro.astro';
+import PageImage from '../components/PageImage.astro';
+
+const page = (await getEntry('pages', 'contact'))!;
+---
+
+<BaseLayout
+  title={page.data.seoTitle ?? page.data.title}
+  description={page.data.description}
+  image={page.data.image}
+>
+  <PageIntro page={page} />
+  <PageImage page={page} />
+</BaseLayout>

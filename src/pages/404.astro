@@ -1,0 +1,22 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Pagina niet gevonden – DOGMA Theatersport Utrecht" noindex>
+  <h1 class="text-2xl font-bold">Oeps, deze scène bestaat niet!</h1>
+  <p class="mt-4">
+    De pagina die je zoekt is er niet (meer). Ga terug naar de <a href="/">homepage</a> of bekijk
+    onze <a href="/agenda/">agenda</a>.
+  </p>
+
+  <script is:inline>
+    // Links to the old PHP site (index.php?link=agenda) still circulate, and
+    // GitHub Pages can't redirect query strings server-side. Forward them here.
+    (function () {
+      if (!/\/index\.php$/.test(location.pathname)) return;
+      var link = new URLSearchParams(location.search).get('link');
+      var pages = { home: '/', agenda: '/agenda/', spelers: '/spelers/', contact: '/contact/' };
+      location.replace(pages[link] || '/');
+    })();
+  </script>
+</BaseLayout>

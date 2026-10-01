@@ -1,0 +1,42 @@
+---
+import { getEntry } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageIntro from '../components/PageIntro.astro';
+import PageImage from '../components/PageImage.astro';
+import NextShow, { type Show } from '../components/NextShow';
+import site from '../data/site.json';
+import { getUpcomingEvents } from '../lib/events';
+import { formatDate } from '../lib/dates';
+
+const page = (await getEntry('pages', 'home'))!;
+const shows: Show[] = (await getUpcomingEvents()).map(({ data }) => ({
+  title: data.title,
+  date: data.date,
+  dateLabel: formatDate(data.date),
+  time: data.time,
+  venue: data.venue,
+  ticketUrl: data.ticketUrl,
+}));
+---
+
+<BaseLayout
+  title={page.data.seoTitle ?? page.data.title}
+  description={page.data.description}
+  image={page.data.image}
+>
+  <PageIntro page={page} />
+
+  <div class="mt-6">
+    <NextShow client:load shows={shows} />
+  </div>
+
+  <p class="mt-6">
+    Zet 'm in je agenda en maak kennis met onze uitgelaten spelers! Wil je meer van onze activiteiten
+    zien? Check onze <a href="/agenda/">agenda</a> en volg ons op <a
+      href={site.instagram}
+      rel="noopener">Instagram</a
+    >.
+  </p>
+
+  <PageImage page={page} />
+</BaseLayout>

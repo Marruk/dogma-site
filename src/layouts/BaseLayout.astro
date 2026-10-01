@@ -1,0 +1,94 @@
+---
+import '../styles/global.css';
+import { getImage } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+import site from '../data/site.json';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import defaultShareImage from '../assets/images/dogma-team.jpg';
+import logoImage from '../assets/images/header.png';
+
+interface Props {
+  title: string;
+  description?: string;
+  /** Image used for link previews (WhatsApp, Facebook, …). */
+  image?: ImageMetadata;
+  noindex?: boolean;
+}
+
+const { title, description = site.description, image = defaultShareImage, noindex = false } = Astro.props;
+
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const shareImage = await getImage({ src: image, width: 1200, format: 'jpg' });
+const shareImageUrl = new URL(shareImage.src, Astro.site);
+const logo = await getImage({ src: logoImage, format: 'png' });
+
+const organization = {
+  '@context': 'https://schema.org',
+  '@type': 'PerformingGroup',
+  name: site.name,
+  url: Astro.site?.href,
+  email: site.email,
+  logo: new URL(logo.src, Astro.site).href,
+  sameAs: [site.instagram, site.facebook].filter(Boolean),
+};
+---
+
+<!doctype html>
+<html lang="nl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#c3f3cd" />
+    <script is:inline>
+      // Pick a random brand color for the background once per visit (see
+      // global.css); it stays the same until the tab is closed. Runs before the
+      // page is drawn, so there's no flash of green.
+      (() => {
+        const brands = ['blue', 'green', 'pink', 'yellow', 'orange'];
+        let brand = null;
+        try { brand = sessionStorage.getItem('brand'); } catch {}
+        if (!brands.includes(brand)) {
+          brand = brands[Math.floor(Math.random() * brands.length)];
+          try { sessionStorage.setItem('brand', brand); } catch {}
+        }
+        document.documentElement.dataset.brand = brand;
+
+        // Match the browser's toolbar color to the chosen background.
+        addEventListener('load', () => {
+          const color = getComputedStyle(document.documentElement).getPropertyValue('--brand-page');
+          document.querySelector('meta[name="theme-color"]').content = color.trim();
+        });
+      })();
+    </script>
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    {noindex && <meta name="robots" content="noindex" />}
+
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="nl_NL" />
+    <meta property="og:site_name" content={site.name} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={shareImageUrl} />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(organization)} />
+    <slot name="head" />
+  </head>
+  <body>
+    <div class="mx-auto max-w-3xl px-4 pb-16">
+      <Header />
+      <main class="mt-8">
+        <slot />
+      </main>
+      <Footer />
+    </div>
+  </body>
+</html>

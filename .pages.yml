@@ -1,0 +1,166 @@
+# Pages CMS configuration — https://pagescms.org/docs/configuration/
+#
+# Every save in the CMS is a commit to this repository, which triggers the
+# GitHub Pages deploy workflow. Changes are live after about a minute.
+
+media:
+  input: src/assets/images
+  # Content files live in src/content/<collection>/, so this relative path
+  # points Astro at the image and lets it optimise it at build time.
+  output: ../../assets/images
+  categories: [image]
+  rename: safe
+
+content:
+  - name: pages
+    label: Pagina's
+    type: group
+    items:
+      - name: home
+        label: Home
+        type: file
+        path: src/content/pages/home.md
+        fields: &page-fields
+          - name: title
+            label: Kop
+            type: string
+            required: true
+          - name: body
+            label: Tekst
+            type: rich-text
+          - name: image
+            label: Foto
+            type: image
+          - name: imageAlt
+            label: Beschrijving van de foto
+            type: string
+            description: Voor slechtzienden en zoekmachines, bijv. "De spelers van DOGMA op het podium".
+          - name: seoTitle
+            label: Titel in Google
+            type: string
+            description: Optioneel. Laat leeg om de kop te gebruiken.
+          - name: description
+            label: Omschrijving in Google
+            type: text
+            required: true
+            description: Eén of twee zinnen die in zoekresultaten en bij gedeelde links verschijnen.
+      - name: agenda
+        label: Agenda
+        type: file
+        path: src/content/pages/agenda.md
+        fields: *page-fields
+      - name: spelers
+        label: Spelers
+        type: file
+        path: src/content/pages/spelers.md
+        fields: *page-fields
+      - name: contact
+        label: Contact
+        type: file
+        path: src/content/pages/contact.md
+        fields: *page-fields
+
+  - name: events
+    label: Voorstellingen
+    type: collection
+    path: src/content/events
+    filename: "{year}-{month}-{day}-{primary}.md"
+    view:
+      fields: [title, date, venue]
+      primary: title
+      sort: [date, title]
+      default:
+        sort: date
+        order: desc
+    fields:
+      - name: title
+        label: Titel
+        type: string
+        required: true
+        description: Bijv. "DOGMA speelt in ZIMIHC". Voorstellingen verdwijnen vanzelf van de site als de datum voorbij is.
+      - name: date
+        label: Datum
+        type: date
+        required: true
+        options:
+          format: yyyy-MM-dd
+      - name: time
+        label: Aanvang
+        type: string
+        description: Bijv. 20:00
+        pattern:
+          regex: ^([01]\d|2[0-3]):[0-5]\d$
+          message: Gebruik het formaat UU:MM, bijv. 20:00
+      - name: venue
+        label: Locatie
+        type: string
+        required: true
+      - name: address
+        label: Adres
+        type: string
+      - name: mapUrl
+        label: Link naar kaart
+        type: string
+      - name: ticketUrl
+        label: Link naar kaartjes / meer info
+        type: string
+      - name: body
+        label: Extra info
+        type: rich-text
+        options:
+          media: false
+
+  - name: players
+    label: Spelers
+    type: collection
+    path: src/content/players
+    filename: "{primary}.md"
+    view:
+      fields: [name]
+      primary: name
+      sort: [name]
+      default:
+        sort: name
+        order: asc
+    fields:
+      - name: name
+        label: Naam
+        type: string
+        required: true
+      - name: photo
+        label: Foto
+        type: image
+        required: true
+        description: Wordt vierkant bijgesneden.
+      - name: body
+        label: Beschrijving
+        type: rich-text
+        options:
+          media: false
+
+  - name: site
+    label: Instellingen
+    type: file
+    path: src/data/site.json
+    fields:
+      - name: name
+        label: Naam van de vereniging
+        type: string
+        required: true
+      - name: description
+        label: Standaard omschrijving in Google
+        type: text
+        required: true
+      - name: email
+        label: E-mailadres
+        type: string
+        required: true
+      - name: instagram
+        label: Instagram-link
+        type: string
+      - name: facebook
+        label: Facebook-link
+        type: string
+      - name: whatsapp
+        label: WhatsApp-kanaal-link
+        type: string

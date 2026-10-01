@@ -1,0 +1,40 @@
+---
+import site from '../data/site.json';
+import Logo from '../assets/images/dogma-logo.svg';
+
+const links = [
+  { href: '/', label: 'home' },
+  { href: '/agenda/', label: 'agenda' },
+  { href: '/spelers/', label: 'spelers' },
+  { href: '/contact/', label: 'contact' },
+];
+
+const current = Astro.url.pathname;
+---
+
+<header class="pt-6">
+  <nav aria-label="Hoofdmenu">
+    <ul class="flex flex-wrap justify-center gap-x-6 gap-y-2 text-lg font-bold tracking-widest">
+      {
+        links.map(({ href, label }) => (
+          <li>
+            <a
+              href={href}
+              class:list={[
+                'text-ink no-underline hover:underline',
+                current === href && 'underline decoration-2 underline-offset-4',
+              ]}
+              aria-current={current === href ? 'page' : undefined}
+            >
+              {label}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </nav>
+
+  <a href="/" class="mt-6 block">
+    <Logo role="img" aria-label={site.name} class="block h-auto w-full" />
+  </a>
+</header>

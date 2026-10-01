@@ -1,0 +1,24 @@
+---
+import site from '../data/site.json';
+
+const socials = [
+  { href: site.facebook, label: 'Facebook', icon: '/icons/facebook.png' },
+  { href: site.instagram, label: 'Instagram', icon: '/icons/instagram.png' },
+  { href: site.whatsapp, label: 'WhatsApp-kanaal', icon: '/icons/whatsapp.png' },
+].filter((social) => social.href);
+---
+
+<footer class="mt-16 flex flex-col items-center gap-4 text-sm">
+  <ul class="flex items-center gap-4">
+    {
+      socials.map(({ href, label, icon }) => (
+        <li>
+          <a href={href} aria-label={label} rel="noopener">
+            <img src={icon} alt="" width="32" height="32" />
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+  <a href={`mailto:${site.email}`}>{site.email}</a>
+</footer>
