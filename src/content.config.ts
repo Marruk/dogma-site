@@ -18,6 +18,14 @@ const pages = defineCollection({
       description: z.string(),
       image: optional(image()),
       imageAlt: optional(z.string()),
+      // The three blob photos in the homepage hero.
+      hero: optional(
+        z.object({
+          left: optional(image()),
+          middle: optional(image()),
+          right: optional(image()),
+        }),
+      ),
     }),
 });
 

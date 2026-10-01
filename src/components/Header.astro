@@ -2,6 +2,13 @@
 import site from '../data/site.json';
 import Logo from '../assets/images/dogma-logo.svg';
 
+interface Props {
+  /** Pages with a hero show the logo there instead. */
+  logo?: boolean;
+}
+
+const { logo = true } = Astro.props;
+
 const links = [
   { href: '/', label: 'home' },
   { href: '/agenda/', label: 'agenda' },
@@ -34,7 +41,12 @@ const current = Astro.url.pathname;
     </ul>
   </nav>
 
-  <a href="/" class="mt-6 block">
-    <Logo role="img" aria-label={site.name} class="block h-auto w-full" />
-  </a>
+  {
+    logo && (
+      <a href="/" class="mt-6 block">
+        {/* Shares its view-transition-name with the hero logo, so it morphs between pages. */}
+        <Logo role="img" aria-label={site.name} class="block h-auto w-full [view-transition-name:logo]" />
+      </a>
+    )
+  }
 </header>

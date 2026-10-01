@@ -20,26 +20,48 @@ content:
         label: Home
         type: file
         path: src/content/pages/home.md
-        fields: &page-fields
-          - name: title
+        # Home has the hero photos on top of the fields every page has. Each
+        # shared field is anchored here and reused in &page-fields below.
+        fields:
+          - name: hero
+            label: Foto's bovenaan
+            type: object
+            description: De drie foto's naast en onder het logo. Ze worden in een vorm bijgesneden, dus zet het belangrijkste in het midden van de foto.
+            fields:
+              - name: left
+                label: Links
+                type: image
+              - name: middle
+                label: Midden (groot)
+                type: image
+              - name: right
+                label: Rechts
+                type: image
+          - &title-field
+            name: title
             label: Kop
             type: string
             required: true
-          - name: body
+          - &body-field
+            name: body
             label: Tekst
             type: rich-text
-          - name: image
+          - &image-field
+            name: image
             label: Foto
             type: image
-          - name: imageAlt
+          - &image-alt-field
+            name: imageAlt
             label: Beschrijving van de foto
             type: string
             description: Voor slechtzienden en zoekmachines, bijv. "De spelers van DOGMA op het podium".
-          - name: seoTitle
+          - &seo-title-field
+            name: seoTitle
             label: Titel in Google
             type: string
             description: Optioneel. Laat leeg om de kop te gebruiken.
-          - name: description
+          - &description-field
+            name: description
             label: Omschrijving in Google
             type: text
             required: true
@@ -48,7 +70,13 @@ content:
         label: Agenda
         type: file
         path: src/content/pages/agenda.md
-        fields: *page-fields
+        fields: &page-fields
+          - *title-field
+          - *body-field
+          - *image-field
+          - *image-alt-field
+          - *seo-title-field
+          - *description-field
       - name: spelers
         label: Spelers
         type: file

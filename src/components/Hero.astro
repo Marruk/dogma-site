@@ -1,0 +1,117 @@
+---
+import type { ImageMetadata } from 'astro';
+import { Image } from 'astro:assets';
+import Logo from '../assets/images/dogma-logo.svg';
+import site from '../data/site.json';
+import { wobble } from '../lib/blobs';
+import Inner from './Inner.astro';
+
+interface Props {
+  /** Set in the CMS on the Home page ("Foto's bovenaan"). Missing photos are skipped. */
+  photos?: { left?: ImageMetadata; middle?: ImageMetadata; right?: ImageMetadata };
+}
+
+const { photos: images = {} } = Astro.props;
+
+// Each photo sits in a blob-shaped mask (the clip paths below). Sizes are a
+// width plus an aspect ratio, so each blob keeps its shape on every screen.
+// The middle photo is centered; the side photos are placed from its edges, so
+// they overlap it by --overlap (a % of the hero width) and stick out beyond it.
+// Both variables are set on the hero below, for phones and for md: and up.
+// Later photos are drawn on top of earlier ones, so the middle photo comes last.
+// The logo sits below them, overlapping it.
+const photos = [
+  { src: images.left, blob: 2, class: 'right-[calc(50%+var(--middle)/2-var(--overlap))] aspect-[5/4] top-[8%] w-[40%]', sizes: '(min-width: 768px) 340px, 44vw' },
+  { src: images.right, blob: 3, class: 'left-[calc(50%+var(--middle)/2-var(--overlap))] top-[16%] aspect-[5/4] w-[36%]', sizes: '(min-width: 768px) 340px, 44vw' },
+  { src: images.middle, blob: 1, class: 'inset-x-0 top-0 mx-auto aspect-[7/5] w-(--middle)', sizes: '(min-width: 768px) 640px, 74vw' },
+].flatMap(({ src, ...photo }) => (src ? [{ src, ...photo }] : []));
+
+// The blob shapes, drawn in a 0..1 box that stretches to each photo. A gentle
+// wave travels around each blob in a loop (see wobble()); these are 16 steps of
+// that loop, played at a steady speed so the motion never pauses. The durations
+// differ so the blobs never move in sync. The middle blob keeps its flat top and
+// bottom and only moves at the sides.
+const steps = 16;
+const shapes = [
+  { id: 1, duration: 12, keepTopAndBottom: true, amount: 0.05, d: 'M0.958 0.522C0.945 0.571 0.933 0.622 0.922 0.671C0.910 0.720 0.907 0.775 0.888 0.817C0.868 0.860 0.838 0.900 0.805 0.927C0.773 0.955 0.734 0.971 0.694 0.983C0.653 0.995 0.610 0.996 0.563 0.998C0.517 1.001 0.463 1.001 0.414 0.998C0.365 0.996 0.312 0.992 0.267 0.984C0.223 0.976 0.182 0.967 0.148 0.949C0.114 0.932 0.086 0.909 0.064 0.878C0.043 0.847 0.029 0.807 0.020 0.763C0.012 0.720 0.018 0.667 0.015 0.617C0.012 0.568 0.005 0.516 0.003 0.465C0.002 0.415 -0.005 0.363 0.007 0.313C0.018 0.264 0.042 0.209 0.073 0.167C0.104 0.125 0.154 0.087 0.194 0.061C0.234 0.035 0.273 0.020 0.314 0.010C0.354 0.000 0.392 0.001 0.436 0.000C0.479 -0.001 0.527 0.001 0.573 0.005C0.618 0.010 0.665 0.017 0.707 0.028C0.749 0.039 0.788 0.051 0.824 0.070C0.859 0.089 0.893 0.112 0.921 0.141C0.949 0.171 0.978 0.208 0.990 0.248C1.003 0.288 1.001 0.335 0.996 0.380C0.991 0.426 0.970 0.474 0.958 0.522Z' },
+  { id: 2, duration: 11, amount: 0.07, d: 'M1.000 0.401C1.000 0.509 0.962 0.688 0.858 0.788C0.754 0.887 0.495 0.992 0.377 1.000C0.258 1.007 0.211 0.921 0.148 0.832C0.086 0.743 -0.010 0.582 0.001 0.466C0.012 0.349 0.125 0.212 0.213 0.134C0.300 0.057 0.420 -0.001 0.528 0.000C0.635 0.001 0.779 0.071 0.857 0.138C0.936 0.205 1.000 0.292 1.000 0.401Z' },
+  { id: 3, duration: 10, amount: 0.07, d: 'M0.999 0.485C0.990 0.622 0.949 0.882 0.834 0.959C0.719 1.036 0.439 0.989 0.307 0.948C0.176 0.907 0.087 0.833 0.046 0.713C0.005 0.593 -0.039 0.348 0.061 0.229C0.162 0.110 0.510 0.016 0.648 0.002C0.787 -0.013 0.832 0.062 0.891 0.142C0.949 0.223 1.008 0.349 0.999 0.485Z' },
+].map(({ amount, keepTopAndBottom, ...shape }) => {
+  const { d } = shape;
+  return {
+    ...shape,
+    // The last frame repeats the first, so the loop joins up seamlessly.
+    frames: Array.from({ length: steps + 1 }, (_, step) =>
+      wobble(d, (step / steps) * 2 * Math.PI, { amount, keepTopAndBottom }),
+    ).join(';'),
+  };
+});
+---
+
+<div class="mx-auto mt-8 max-w-6xl">
+  <div class="relative aspect-16/8.5 [--middle:60%] [--overlap:12%]">
+    <svg id="hero-shapes" width="0" height="0" class="absolute" aria-hidden="true">
+      <defs>
+        {
+          shapes.map(({ id, d, frames, duration }) => (
+            <clipPath id={`hero-blob-${id}`} clipPathUnits="objectBoundingBox">
+              <path d={d}>
+                <animate
+                  attributeName="d"
+                  values={frames}
+                  dur={`${duration}s`}
+                  repeatCount="indefinite"
+                />
+              </path>
+            </clipPath>
+          ))
+        }
+      </defs>
+    </svg>
+    <script is:inline>
+      // Keep the blobs still for visitors who asked their system for less motion.
+      if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        document.getElementById('hero-shapes').pauseAnimations();
+      }
+    </script>
+
+    {
+      photos.map(({ src, blob, class: position, sizes }) => (
+        <div class:list={['absolute', position]} style={`clip-path: url(#hero-blob-${blob})`}>
+          <Image
+            src={src}
+            alt=""
+            widths={[300, 600, 900]}
+            sizes={sizes}
+            loading="eager"
+            class="h-full w-full object-cover"
+          />
+        </div>
+      ))
+    }
+
+    <Logo
+      role="img"
+      aria-label={site.name}
+      class="hero-logo absolute inset-x-0 mx-auto h-auto w-full max-w-[40rem] bottom-0 px-8"
+    />
+  </div>
+  <Inner>
+    <div class="text-center font-bold">
+      toch wel één van de leukste theatersportverenigingen van Utrecht denken wij
+    </div>
+  </Inner>
+</div>
+
+<style>
+  .hero-logo {
+    overflow: visible;
+  }
+  .hero-logo :global(path[fill="#232C55"]) {
+    stroke: var(--color-page);
+    stroke-width: 8px;
+    stroke-linejoin: round;
+    paint-order: stroke;
+    vector-effect: non-scaling-stroke;
+  }
+</style>

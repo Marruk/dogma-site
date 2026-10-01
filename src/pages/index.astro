@@ -1,6 +1,7 @@
 ---
 import { getEntry } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
+import Hero from '../components/Hero.astro';
 import PageIntro from '../components/PageIntro.astro';
 import PageImage from '../components/PageImage.astro';
 import NextShow, { type Show } from '../components/NextShow';
@@ -24,6 +25,8 @@ const shows: Show[] = (await getUpcomingEvents()).map(({ data }) => ({
   description={page.data.description}
   image={page.data.image}
 >
+  <Hero slot="hero" photos={page.data.hero} />
+
   <PageIntro page={page} />
 
   <div class="mt-6">
