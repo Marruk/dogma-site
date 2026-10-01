@@ -25,6 +25,8 @@
   --tw-prose-counters: var(--color-foreground);
   --tw-prose-quotes: var(--color-foreground);
   --tw-prose-hr: var(--color-foreground);
+  --tw-prose-quote-borders: var(--color-foreground);
+  --tw-prose-th-borders: var(--color-foreground);
 }
 
 @layer base {
