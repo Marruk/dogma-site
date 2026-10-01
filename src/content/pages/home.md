@@ -11,33 +11,3 @@ DOGMA is een theatersportvereniging uit het mooie Utrecht. Onze oorsprong ligt a
 Wel eens een kappersfestival in horrorthema gezien? Een verliefde kaasschaaf van pluche met een identiteitscrisis? Of jeugdherinneringen waar je een traantje bij wegpinkt? Bij DOGMA is alles mogelijk!
 
 Uiteraard ben je van harte welkom bij onze volgende voorstelling. Laat je verrassen en kom kijken!
-
-# HALLO DIT IS EEN TEST
-
-wow leuk lekker testen
-
-## DIT OOK
-
-### DIT OOK
-
-- Dit ook
-- En dit
-
-1. En dit ook
-2. En dit ook
-
-![](../../assets/images/agenda.jpeg)
-
-
-| dit | ook | test |
-| ------ | ---- | ------ |
-| echt | leuk | lekker |
-| testen |  |  |
-
-
-> hoi test test
-
-```
-gok eens wat dit is
-```
-
